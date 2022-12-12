@@ -5,6 +5,7 @@ Para não haver arquivo(s) com informação(ões) de login, ou seja, dados priva
 Assim,
 
 $ terraform plan -input=true
+
 $ terraform apply -input=true
 
 São comandos com opções necessárias para que não resultem em erro.
