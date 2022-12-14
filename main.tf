@@ -59,8 +59,6 @@ resource "vsphere_virtual_machine" "vms" {
 
   network_interface {
     network_id   = data.vsphere_network.rede.id
-    #ipv4_address = var.rede[nome]+"${count.index +1}"
-    #ipv4_netmask = 24  ###Dito na hora compilação que não existem os parâmetros mencionados
   }
 
   disk {
