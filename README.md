@@ -12,5 +12,5 @@ São comandos com opções necessárias para que não resultem em erro.
 
 Ou criar um arquivo <nomedoArquivo>.auto.tfvars e adicionar os valores de duas variáveis:
   
-  usuario = "usuarioUFPE-ID@ufpe.br"
-  senha   = "senhaDoUFPE-ID"
+ // usuario = "usuarioUFPE-ID@ufpe.br"
+ // senha   = "senhaDoUFPE-ID"
