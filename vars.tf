@@ -6,48 +6,42 @@ variable "senha" {
   type = string
 }
 
-variable vcenter_params {
- default =  {
-   "datastore"    = "hydra01-local"
-   "resourcepool" = "01 - Produção/Teste_resource_pool"
-   "rede"         = "VM Network"
-   "cluster"      = "01 - Producao"
-} 
+variable "vcenter_params" {
+ type = map
+ default = {
+   datastore    = "0"   
+   resourcepool = "0" 
+   rede         = "0"        
+   cluster      = "0"      
+  }
 }
 
-variable servidor {
+variable "servidor" {
   type = string
   default = "vcenter6.ufpe.br"
 }
 
-variable balancer_params {
-  default =  {
-        "hostname" = "balancer007"
-       "cpus"      = "2"
-       "memoria"   = "2048"  ##Em MB
+variable "vm_params" {
+  type = map(object({
+      nome      = string
+      cpus      = string
+      memoria   = string  #MB em binário
+      disco     = string
+    }))
+}
+
+variable "template" {
+  type = string
 } 
-}
-variable vm_count {
-  default = "1"
+
+variable "guest_id" {
+  type = string
 }
 
-variable rede {
-  default =  {
-    "nome"     = "intpost0"
-    "end_ipv4" = "10.15.0." 
-    "mascara"  = "24"
-  } 
- 
-}
 
-variable disco {
-  default =  {
-    "tamanho" = "200"
-    "label"   = "disk00"
-  } 
-}
-###variable serv_replicacao
-###variable serv_postgresql
+
+
+
 
 
 

@@ -25,13 +25,13 @@ data "vsphere_compute_cluster" "cluster" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-#data "vsphere_resource_pool" "pool" {
-# name = var.vcenter_params["resourcepool"]
-# datacenter_id = data.vsphere_datacenter.dc.id
-#}
-
 data "vsphere_datastore" "datastore" {
-  name          = var.vcenter_params["datastore"] 
+	  name          = var.vcenter_params["datastore"] 
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_virtual_machine" "template" {
+  name          = var.template
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -42,27 +42,33 @@ resource "vsphere_folder" "parent" {
 }
 
 data "vsphere_network" "rede"{
-  name          = var.vcenter_params["rede"]
+  name          = "${var.vcenter_params["rede"]}"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-resource "vsphere_virtual_machine" "srv0" {
-  count            = var.vm_count
-  name             = "VM_teste"
-  num_cpus         = var.balancer_params.cpus
-  memory           = var.balancer_params.memoria
+#Configuração das VMs
+
+resource "vsphere_virtual_machine" "vms" {
+  for_each = var.vm_params
+  name             = each.value["nome"]
+  num_cpus         = each.value["cpus"]
+  memory           = each.value["memoria"]
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
-  
+  guest_id         = var.guest_id
+
   network_interface {
     network_id   = data.vsphere_network.rede.id
-    #ipv4_address = var.rede["nome"]+"${count.index +1}"
+    #ipv4_address = var.rede[nome]+"${count.index +1}"
     #ipv4_netmask = 24  ###Dito na hora compilação que não existem os parâmetros mencionados
   }
 
   disk {
-    size  = var.disco["tamanho"]
-    label = var.disco["label"]
-
+    size  = each.value["disco"]
+    label = "disk01"
+  
+  }
+  clone {
+    template_uuid = data.vsphere_virtual_machine.template.id
   }
 }
