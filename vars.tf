@@ -1,47 +1,45 @@
-variable "usuario" {
-  type = string 
+
+variable "credenciais" {
+  type = object({
+    usuario = string
+    senha   = string
+  })
 }
 
-variable "senha" {
-  type = string
+variable "conexao" {
+  type = object({
+    tipo    = string
+    usuario = string
+    senha   = string
+  })
 }
-
+  
 variable "vcenter_params" {
- type = map
- default = {
-   datastore    = "0"   
-   resourcepool = "0" 
-   rede         = "0"        
-   cluster      = "0"      
-  }
-}
-
-variable "servidor" {
-  type = string
-  default = "vcenter6.ufpe.br"
+ type = object({
+   datastore    = string  
+   resourcepool = string
+   rede         = string    
+   cluster      = string   
+  })
 }
 
 variable "vm_params" {
   type = map(object({
-      nome      = string
-      cpus      = string
-      memoria   = string  #MB em binário
-      disco     = string
+      nome        = string
+      cpus        = string
+      memoria     = string  #MiB em binário
+      disco       = string
+      quantidade  = string
+      hostname    = string
+      ipv4        = string
+      script      = object({
+        argumentos = list
+        arquivo   = string            
+      })
     }))
 }
 
-variable "template" {
-  type = string
-} 
+variable "lista_ip" {
+  #for_each var = vm_params
 
-variable "guest_id" {
-  type = string
 }
-
-
-
-
-
-
-
-
