@@ -13,9 +13,7 @@ provider "vsphere" {
   vsphere_server       = local.servidor
   allow_unverified_ssl = true
 }
-
-###Blocos do tipo "data"####
-                        
+#BLOCOS DO TIPO 'DATA'#                        
 data "vsphere_datacenter" "dc" {
   name = "UFPE"
 }
@@ -26,12 +24,12 @@ data "vsphere_compute_cluster" "cluster" {
 }
 
 data "vsphere_datastore" "datastore" {
-	  name          = var.vcenter_params.datastore
+	name          = var.vcenter_params.datastore
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_virtual_machine" "template" {
-  name          = var.template
+  name          = local.template
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -45,26 +43,24 @@ data "vsphere_network" "rede"{
   name          = var.vcenter_params.rede
   datacenter_id = data.vsphere_datacenter.dc.id
 }
-
-#Configuração das VMs
-
+#CONFIGURAÇÃO DAS VMs#
 resource "vsphere_virtual_machine" "vms" {
-  for_each         = var.vm_params
+  for_each         = {for idx, valores in var.vm_params: idx => valores}
   folder           = local.diretorio
-  count            = each.value.quantidade
   name             = each.value.nome
   num_cpus         = each.value.cpus
   memory           = each.value.memoria
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
-  guest_id         = var.guest_id
-#Necessidade de un duplo for_each para os provisionadores#
+  guest_id         = local.guest_id
+#NECESSIDADE DE UM OUTRO LOOP PARA OS PROVISIONADORES (MAIS DE UM SCRIPT A SER EXECUTADO PARA UM MESMO RECURSO#  
   provisioner "file" {
     source      = local.origem_arquivo
     destination = "~/${each.value.script.arquivo}" 
 
     connection {
       type     = "ssh"
+      host     = each.value.ip
       user     = var.credenciais.usuario
       password = var.credenciais.senha
     }
@@ -72,12 +68,12 @@ resource "vsphere_virtual_machine" "vms" {
 
   provisioner "remote-exec" {
     inline = [
-      "echo 'export '  ",
-      "sh ${each.value.script.arquivo} ${each.value.script.argumentos}"
-
+      "sudo sh ${each.value.script.arquivo}"
     ]
+
     connection {
       type     = "ssh"
+      host     = each.value.ip
       user     = var.credenciais.usuario
       password = var.credenciais.senha 
     }        
@@ -93,5 +89,17 @@ resource "vsphere_virtual_machine" "vms" {
   }
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
+
+    customize {
+      linux_options {
+           host_name = each.value.hostname
+           domain    = "ufpe.br"
+      }
+
+      network_interface {
+        ipv4_address = each.value.ip
+        ipv4_netmask = local.mascara_ip
+      }
+     }
   }
 }

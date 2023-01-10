@@ -1,3 +1,13 @@
+#VARIÁVEIS CONSTANTES COMPARTILHADAS PELAS VÁRIAS INSTÂNCIAS DAS VMS:
+locals {
+  servidor       = "vcenter6.ufpe.br"
+  diretorio      = "Projeto Balancer"
+  disco_nome     = "disk0"
+  guest_id       = "ubuntu64Guest"
+  template       = "projeto-balancer" 
+  origem_arquivo = "./"
+  mascara_ip     = "24"
+}
 
 variable "credenciais" {
   type = object({
@@ -6,14 +16,6 @@ variable "credenciais" {
   })
 }
 
-variable "conexao" {
-  type = object({
-    tipo    = string
-    usuario = string
-    senha   = string
-  })
-}
-  
 variable "vcenter_params" {
  type = object({
    datastore    = string  
@@ -24,22 +26,17 @@ variable "vcenter_params" {
 }
 
 variable "vm_params" {
-  type = map(object({
-      nome        = string
-      cpus        = string
-      memoria     = string  #MiB em binário
-      disco       = string
-      quantidade  = string
-      hostname    = string
-      ipv4        = string
-      script      = object({
-        argumentos = list
-        arquivo   = string            
-      })
-    }))
-}
+  type = list(object({
+      nome         = string
+      cpus         = string
+      memoria      = string  #MiB em binário
+      disco        = string
+      hostname     = string
+      ip           = string
+      script       = object({
+        arquivo    = string
+      })           
+      }))
+    }
 
-variable "lista_ip" {
-  #for_each var = vm_params
 
-}
