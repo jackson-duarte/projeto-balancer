@@ -45,7 +45,7 @@ data "vsphere_network" "rede"{
 }
 #CONFIGURAÇÃO DAS VMs#
 resource "vsphere_virtual_machine" "vms" {
-  for_each         = {for idx, valores in var.vm_params: idx => valores}
+  for_each         = {for idx, valores in var.vm_params: valores.nome => valores}
   folder           = local.diretorio
   name             = each.value.nome
   num_cpus         = each.value.cpus
@@ -81,6 +81,7 @@ resource "vsphere_virtual_machine" "vms" {
 
   network_interface {
     network_id   = data.vsphere_network.rede.id
+    adapter_type = local.adaptador_rede
   }
 
   disk {
@@ -100,6 +101,9 @@ resource "vsphere_virtual_machine" "vms" {
         ipv4_address = each.value.ip
         ipv4_netmask = local.mascara_ip
       }
+      ipv4_gateway    = local.gateway
+      dns_server_list = local.servidoresdns
+
      }
   }
 }

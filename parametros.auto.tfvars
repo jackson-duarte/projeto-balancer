@@ -7,18 +7,18 @@ vcenter_params  = {
 }
 
 conexao = {
-  senha   = credenciais.senha
+  senha   = var.credenciais.senha
   tipo    = "ssh" 
-  usuario = credenciais.usuario
+  usuario = var.credenciais.usuario
 }
 #Quais serão os tipos de VMs, e quantas cópias de cada serão criadas
 vm_params = [
    {
     nome         = "Banco - Réplica"
     hostname     = "srv-slave"
-    cpus         = "12"
-    memoria      = "32000"
-    disco        = "300"
+    cpus         = "4"
+    memoria      = "8000"
+    disco        = "150"
     ip           = "150.161.0.175"
     script       = {
       arquivo = "pacotes.sh"

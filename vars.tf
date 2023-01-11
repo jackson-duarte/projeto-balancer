@@ -4,9 +4,12 @@ locals {
   diretorio      = "Projeto Balancer"
   disco_nome     = "disk0"
   guest_id       = "ubuntu64Guest"
-  template       = "projeto-balancer" 
+  template       = "vm_projeto_balancer" 
   origem_arquivo = "./"
   mascara_ip     = "24"
+  gateway        = "150.161.50.254"
+  servidoresdns  = ["150.161.50.72","150.161.50.73","150.161.50.7","150.161.50.91"]
+  adaptador_rede = "vmxnet3"
 }
 
 variable "credenciais" {
