@@ -6,11 +6,7 @@ vcenter_params  = {
   cluster       = "02 - Desenvolvimento"
 }
 
-conexao = {
-  senha   = var.credenciais.senha
-  tipo    = "ssh" 
-  usuario = var.credenciais.usuario
-}
+
 #Quais serão os tipos de VMs, e quantas cópias de cada serão criadas
 vm_params = [
    {

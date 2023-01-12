@@ -54,28 +54,30 @@ resource "vsphere_virtual_machine" "vms" {
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   guest_id         = local.guest_id
 #NECESSIDADE DE UM OUTRO LOOP PARA OS PROVISIONADORES (MAIS DE UM SCRIPT A SER EXECUTADO PARA UM MESMO RECURSO#  
-  provisioner "file" {
-    source      = local.origem_arquivo
-    destination = "~/${each.value.script.arquivo}" 
+  #provisioner "file" {
+  #  source      = local.origem_arquivo
+  #  destination = "~/${each.value.script.arquivo}" 
 
-    connection {
-      type     = "ssh"
-      host     = each.value.ip
-      user     = var.credenciais.usuario
-      password = var.credenciais.senha
-    }
-      }
+  #  connection {
+  #    type     = "ssh"
+  #    host     = each.value.ip
+  #    user     = var.credenciais.usuario
+  #    private_key = file("${var.credenciais.chave}")
+  #  }
+  #    }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo sh ${each.value.script.arquivo}"
+      #"sudo sh ${each.value.script.arquivo}"
+      "echo ${var.credenciais.senha} | sudo -S -v",
+      "sudo apt-get install -y chocolate-doom"
     ]
 
     connection {
       type     = "ssh"
       host     = each.value.ip
       user     = var.credenciais.usuario
-      password = var.credenciais.senha 
+      private_key = file("${var.credenciais.chave}")
     }        
   }
 
