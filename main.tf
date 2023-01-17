@@ -45,32 +45,32 @@ data "vsphere_network" "rede"{
 }
 #CONFIGURAÇÃO DAS VMs#
 resource "vsphere_virtual_machine" "vms" {
-  for_each         = {for idx, valores in var.vm_params: valores.nome => valores}
+  for_each         = flatten_params
   folder           = local.diretorio
-  name             = each.value.nome
+  name             = each.key
   num_cpus         = each.value.cpus
   memory           = each.value.memoria
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   guest_id         = local.guest_id
-#NECESSIDADE DE UM OUTRO LOOP PARA OS PROVISIONADORES (MAIS DE UM SCRIPT A SER EXECUTADO PARA UM MESMO RECURSO#  
-  #provisioner "file" {
-  #  source      = local.origem_arquivo
-  #  destination = "~/${each.value.script.arquivo}" 
 
-  #  connection {
-  #    type     = "ssh"
-  #    host     = each.value.ip
-  #    user     = var.credenciais.usuario
-  #    private_key = file("${var.credenciais.chave}")
-  #  }
-  #    }
+  provisioner "file" {
+    source      = local.origem_arquivo
+    destination = "~/${each.value.script.arquivo}" 
+
+    connection {
+      type     = "ssh"
+      host     = each.value.ip
+      user     = var.credenciais.usuario
+      private_key = file("${var.credenciais.chave}")
+    }
+      }
 
   provisioner "remote-exec" {
     inline = [
       #"sudo sh ${each.value.script.arquivo}"
       "echo ${var.credenciais.senha} | sudo -S -v",
-      "sudo apt-get install -y chocolate-doom"
+      "sh ${each.value.script.arquivo}"
     ]
 
     connection {
@@ -83,7 +83,7 @@ resource "vsphere_virtual_machine" "vms" {
 
   network_interface {
     network_id   = data.vsphere_network.rede.id
-    adapter_type = local.adaptador_rede
+    adapter_type = local.rede.adaptador_rede
   }
 
   disk {
@@ -95,16 +95,16 @@ resource "vsphere_virtual_machine" "vms" {
 
     customize {
       linux_options {
-           host_name = each.value.hostname
+           host_name = each.key
            domain    = "ufpe.br"
       }
 
       network_interface {
         ipv4_address = each.value.ip
-        ipv4_netmask = local.mascara_ip
+        ipv4_netmask = local.rede.mascara_ip
       }
-      ipv4_gateway    = local.gateway
-      dns_server_list = local.servidoresdns
+      ipv4_gateway    = local.rede.gateway
+      dns_server_list = local.rede.servidoresdns
 
      }
   }

@@ -6,39 +6,46 @@ vcenter_params  = {
   cluster       = "02 - Desenvolvimento"
 }
 
-
 #Quais serão os tipos de VMs, e quantas cópias de cada serão criadas
 vm_params = [
    {
     nome         = "Banco - Réplica"
+    tipo         = "Slave"
     hostname     = "srv-slave"
     cpus         = "4"
     memoria      = "8000"
     disco        = "150"
-    ip           = "150.161.0.175"
+    ip           = ["150.161.0.175"]
     script       = {
-      arquivo = "pacotes.sh"
+      arquivo = "slave.sh"
       } 
-   }      
-]
-#  primario = {
-#    tipo     = "Master"
-#    cpus     = "12"
-#    memoria  = "32000"
-#    disco    = "300"
-#    script   = {
-      //
-#    } 
-  
-#  balancer = {
-#    tipo       = "Balanceador"
-#    cpus       = "4"
-#    memoria    = "4000"
-#    disco      = "100"
-#    script     = {
-#    //
-#    }
-#  } 
+   },       
 
+   {
+    tipo     = "Servidor Principal"
+    nome     = "Master"
+    hostname = "srv-master"
+    cpus     = "12"
+    memoria  = "32000"
+    disco    = "300"
+    ip       = []
+    script   = {
+      arquivo = "master.sh"
+    }
+  },  
+  
+  {
+    tipo       = "Balanceador"
+    nome       = "Balancer"
+    hostname   = "srv-balancer"
+    cpus       = "4"
+    memoria    = "4000"
+    disco      = "100"
+    ip         = []
+    script     = {
+      arquivo = "pgpool.sh"
+    }
+  } 
+]
  
     
