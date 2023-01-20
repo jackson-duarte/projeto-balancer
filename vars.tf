@@ -12,10 +12,26 @@ locals {
     servidoresdns  = ["150.161.50.72","150.161.50.73","150.161.50.7","150.161.50.91"]
     adaptador_rede = "vmxnet3"
   }
-  backend_nodes = flatten([ for objeto in var.vm_params : [
-    for endereco in objeto.ip : endereco if objeto.tipo != "Balanceador"
-  ]])
 
+  flatten_params = flatten([
+        for obj in var.vm_params: [
+          for endereco in obj.ip: {
+            nome     = "${obj.nome} ${index(obj.ip,endereco)+1}"
+            tipo     = obj.tipo
+            cpus     = obj.cpus
+            memoria  = obj.memoria
+            disco    = obj.disco
+            hostname = "${obj.hostname}0${index(obj.ip,endereco)+1}"
+            ip       = endereco
+            script   = obj.script
+
+          } 
+        ]
+      ])
+
+  backend_nodes = join(" ",flatten([ for objeto in var.vm_params : [
+    for endereco in objeto.ip : endereco if objeto.tipo != "Balanceador"
+  ]]))
 }
 
 variable "credenciais" {
@@ -46,19 +62,10 @@ variable "vm_params" {
       ip           = list(string)
       script       = object({
         arquivo    = string
+        parametros = string
       })           
       }))
     }
 
-    output "flatten_params" {
-      value = flatten([
-        for obj in var.vm_params: [
-          for endereco in obj.ip: {
-            "${i.hostname}${endereco.index}" => obj
-          } 
-        ]
-      ])
-      
-    }
 
 

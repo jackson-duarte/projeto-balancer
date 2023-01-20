@@ -45,9 +45,9 @@ data "vsphere_network" "rede"{
 }
 #CONFIGURAÇÃO DAS VMs#
 resource "vsphere_virtual_machine" "vms" {
-  for_each         = flatten_params
+  for_each         = {for item in local.flatten_params : item.nome => item}
   folder           = local.diretorio
-  name             = each.key
+  name             = each.value.nome
   num_cpus         = each.value.cpus
   memory           = each.value.memoria
   datastore_id     = data.vsphere_datastore.datastore.id
@@ -56,7 +56,7 @@ resource "vsphere_virtual_machine" "vms" {
 
   provisioner "file" {
     source      = local.origem_arquivo
-    destination = "~/${each.value.script.arquivo}" 
+    destination = "~" 
 
     connection {
       type     = "ssh"
@@ -70,7 +70,7 @@ resource "vsphere_virtual_machine" "vms" {
     inline = [
       #"sudo sh ${each.value.script.arquivo}"
       "echo ${var.credenciais.senha} | sudo -S -v",
-      "sh ${each.value.script.arquivo}"
+      "bash ${each.value.script.arquivo} ${local.backend_nodes}"
     ]
 
     connection {
@@ -95,7 +95,7 @@ resource "vsphere_virtual_machine" "vms" {
 
     customize {
       linux_options {
-           host_name = each.key
+           host_name = each.value.hostname
            domain    = "ufpe.br"
       }
 

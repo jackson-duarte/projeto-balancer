@@ -7,6 +7,7 @@ vcenter_params  = {
 }
 
 #Quais serão os tipos de VMs, e quantas cópias de cada serão criadas
+
 vm_params = [
    {
     nome         = "Banco - Réplica"
@@ -15,10 +16,11 @@ vm_params = [
     cpus         = "4"
     memoria      = "8000"
     disco        = "150"
-    ip           = ["150.161.0.175"]
+    ip           = ["150.161.0.248"]
     script       = {
       arquivo = "slave.sh"
-      } 
+      parametros = ""
+    }
    },       
 
    {
@@ -28,24 +30,28 @@ vm_params = [
     cpus     = "12"
     memoria  = "32000"
     disco    = "300"
-    ip       = []
+    ip       = ["150.161.0.247"]
     script   = {
       arquivo = "master.sh"
+      parametros = ""
     }
   },  
   
   {
-    tipo       = "Balanceador"
-    nome       = "Balancer"
-    hostname   = "srv-balancer"
-    cpus       = "4"
-    memoria    = "4000"
-    disco      = "100"
-    ip         = []
-    script     = {
-      arquivo = "pgpool.sh"
+    tipo         = "Balanceador"
+    nome         = "Balancer"
+    hostname     = "srv-balancer"
+    cpus         = "4"
+    memoria      = "4000"
+    disco        = "100"
+    ip           = ["150.161.0.246"]
+    script       = {
+      arquivo    = "pgpool.sh"
+      parametros = ""
     }
   } 
 ]
+
+
  
     
