@@ -16,7 +16,7 @@ sudo chmod 0600 ~/.pgpass; sudo chown postgres ~/.pgpass
 sudo mv ~/.pgpass /home/postgres/.pgpass
 ####### CONFIGURAÇÃO DO POSTGRESQL #######
 # Configuração de variáveis de PostgreSQL #  
-sudo su - postgres << EOF
+sudo su - postgres << 'EOF'
 echo "export PGDATA="/var/lib/postgresql/10/main"" >> ~/.bashrc 
 source ~/.bashrc
 mkdir /var/lib/postgresql/10/main/archivedir
