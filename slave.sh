@@ -9,7 +9,7 @@ source ~/.bashrc
 mkdir /var/lib/postgresql/10/main/archivedir
 EOF
 # Arquivo .pgpass para que seja desnecessário login com senha para algumas rotinas, como a de replicação 
-sudo touch ~/.pgpass; 
+touch ~/.pgpass; 
 declare -A credenciais=(["pgpool"]="pgp00l#." ["postgres"]="p0stgr3s#." ["replicador"]="r3pl1c@d0r#.")
 for user in "${!credenciais[@]}"; do
   for porta in 5432 9898 9999; do
