@@ -1,9 +1,4 @@
 #!/bin/bash
-####### PARTE COMUM A QUALQUER TIPO DE NÓ #######
-## Para restartar todos os serviços necessários depois da instalação de pacotes sem a fatídica mensagem de prompt para escolha dos serviços que devem ser reinicializados. ###
-sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf
-sudo adduser --disabled-password --gecos "" postgres
-echo "postgres   ALL=NOPASSWD:    /usr/bin/pg_.* " | sudo tee -a  /etc/sudoers
 ####### INSTALAÇÃO DO PGPOOL-II #######
 sudo apt-get install -y pgpool2
 echo "export PGPOOL_HOME='/etc/pgpool2'" >> ~/.bashrc && source ~/.bashrc

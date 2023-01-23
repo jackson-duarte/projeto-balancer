@@ -4,13 +4,13 @@ locals {
   diretorio      = "Projeto Balancer"
   disco_nome     = "disk0"
   guest_id       = "ubuntu64Guest"
-  template       = "template-projeto-balancer" 
+  template       = "template-balancer-postgres" 
   origem_arquivo = "./"
   rede = { 
     mascara_ip     = "24"
     gateway        = "150.161.0.254"
     servidoresdns  = ["150.161.50.72","150.161.50.73","150.161.50.7","150.161.50.91"]
-    adaptador_rede = "vmxnet3"
+    adaptador_rede = "e1000"
   }
 
   flatten_params = flatten([
@@ -24,7 +24,6 @@ locals {
             hostname = "${obj.hostname}0${index(obj.ip,endereco)+1}"
             ip       = endereco
             script   = obj.script
-
           } 
         ]
       ])
@@ -32,6 +31,10 @@ locals {
   backend_nodes = join(" ",flatten([ for objeto in var.vm_params : [
     for endereco in objeto.ip : endereco if objeto.tipo != "Balanceador"
   ]]))
+   backend_nodes = join(" ",flatten([ for objeto in var.vm_params : [
+    for endereco in objeto.ip : endereco if objeto.tipo != "Balanceador"
+  ]]))
+
 }
 
 variable "credenciais" {

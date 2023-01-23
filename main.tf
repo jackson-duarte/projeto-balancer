@@ -55,8 +55,8 @@ resource "vsphere_virtual_machine" "vms" {
   guest_id         = local.guest_id
 
   provisioner "file" {
-    source      = local.origem_arquivo
-    destination = "~" 
+    source      = "${local.origem_arquivo}/${each.value.script.arquivo}"
+    destination = format("%s/%s/%s","/home",trim("${var.credenciais.usuario}","@ufpe.br"),"${each.value.script.arquivo}")
 
     connection {
       type     = "ssh"
@@ -68,9 +68,8 @@ resource "vsphere_virtual_machine" "vms" {
 
   provisioner "remote-exec" {
     inline = [
-      #"sudo sh ${each.value.script.arquivo}"
-      "echo ${var.credenciais.senha} | sudo -S -v",
-      "bash ${each.value.script.arquivo} ${local.backend_nodes}"
+      #"echo ${var.credenciais.senha} | sudo -S -v",
+      "nohup sudo bash ~/${each.value.script.arquivo} 2>erros_script.txt"
     ]
 
     connection {
@@ -87,8 +86,9 @@ resource "vsphere_virtual_machine" "vms" {
   }
 
   disk {
-    size  = each.value.disco
-    label = local.disco_nome
+    size             = each.value.disco
+    label            = local.disco_nome
+    thin_provisioned = true
   }
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
